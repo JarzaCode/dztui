@@ -736,35 +736,6 @@ find_library_folder(){
     fi
     logger INFO "Steam path resolved to: $steam_path"
 }
-restart_steam(){
-    local flatpak
-    local steam
-    local client
-    [[ $(command -v flatpak) ]] && flatpak=$(flatpak list | grep valvesoftware.Steam)
-    steam=$(command -v steam)
-        if [[ -z "$steam" ]] && [[ -z "$flatpak" ]]; then
-        local msg="Found neither Steam nor Flatpak Steam"
-        raise_error_and_quit "$msg"
-        exit 1
-    elif [[ -n "$steam" ]] && [[ -n "$flatpak" ]]; then
-        [[ -n $client ]] && return 0
-        if [[ -z $client ]]; then
-            client="steam"
-        fi
-    elif [[ -n "$steam" ]]; then
-        client="steam"
-    else
-        client="flatpak"
-    fi
-
-    if [[ $client == "flatpak" ]]; then
-        flatpak kill com.valvesoftware.Steam
-        flatpak start com.valvesoftware.Steam
-    else
-        killall steam
-        steam &
-    fi
-}
 create_config(){
     #if old path is malformed and this function is forcibly called,
     #wipe paths from memory before entering the loop to force path rediscovery
@@ -812,19 +783,11 @@ create_config(){
             find_library_folder "$default_steam_path"
             if [[ -z $steam_path ]]; then
                 logger raise_error "Steam path was empty"
-                zenity --question \
-                --text="DayZ not found or not installed at the Steam library given.\nIf you have recently installed DayZ, try restarting steam." \
-                --ok-label="Choose path manually" \
-                --extra-button="Restart Steam" \
-                --cancel-label="Exit"
-
+                zenity --question --text="DayZ not found or not installed at the Steam library given." --ok-label="Choose path manually" --cancel-label="Exit"
                 if [[ $? -eq 0 ]]; then
                     logger INFO "User selected file picker"
                     file_picker
                     find_library_folder "$default_steam_path"
-                elif [[ $? -eq 5 ]]; then
-                    logger INFO "User selected restart Steam"
-                    restart_steam
                 else
                     fdialog "Failed to find Steam at the provided location"
                     exit 1
