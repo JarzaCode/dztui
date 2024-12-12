@@ -55,7 +55,7 @@ sums_path="$helpers_path/sums.md5"
 func_helper="$helpers_path/funcs"
 
 #URLS
-author="aclist"
+author="JarzaCode"
 repo="dztui"
 url_prefix="https://raw.githubusercontent.com/$author/$repo"
 stable_url="$url_prefix/dzgui"
@@ -575,7 +575,7 @@ fetch_helpers_by_sum(){
         ["funcs"]="d8ae2662fbc3c62bdb5a51dec1935705"
         ["lan"]="c62e84ddd1457b71a85ad21da662b9af"
     )
-    local author="aclist"
+    local author="JarzaCode"
     local repo="dztui"
     local realbranch
     local file
